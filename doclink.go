@@ -26,8 +26,10 @@ func ParseDocLink(data []byte) (ast.Node, []byte, int) {
 		return nil, data, 0
 	}
 	end = end + i
+
 	lines := string(data[i:end])
-	if len(data) > end {
+
+	if len(data) > end && len(data) > end+suffixLen {
 		if data[end+suffixLen] != '\n' {
 			return nil, data, 0
 		}

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -40,6 +39,14 @@ func parserHook(data []byte) (ast.Node, []byte, int) {
 	return nil, nil, 0
 }
 
+func shortURL(url string) string {
+	sp := strings.Split(url, "|")
+	if len(sp) == 1 {
+		return url
+	}
+	return sp[1]
+}
+
 func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool) {
 	if d, ok := node.(*DocLink); ok {
 		if entering {
@@ -49,9 +56,9 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 				return ast.GoToNext, true
 			}
 			if d.Inline {
-				io.WriteString(w, fmt.Sprintf("<a href=\"%s\"  target=\"_blank\">%s</a>", file.ShortWebPath, d.URL))
+				io.WriteString(w, fmt.Sprintf("<a href=\"%s\"  target=\"_blank\">%s</a>", file.ShortWebPath, shortURL(d.URL)))
 			} else {
-				io.WriteString(w, fmt.Sprintf("<p><a href=\"%s\"  target=\"_blank\">%s</a></p>", file.ShortWebPath, d.URL))
+				io.WriteString(w, fmt.Sprintf("<p><a href=\"%s\"  target=\"_blank\">%s</a></p>", file.ShortWebPath, shortURL(d.URL)))
 			}
 
 		}
@@ -66,9 +73,9 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 				return ast.GoToNext, true
 			}
 			if IsImage(file.Ext) {
-				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\"/>", file.ShortWebPath, d.URL))
+				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\"/>", file.ShortWebPath, shortURL(d.URL)))
 			} else {
-				io.WriteString(w, fmt.Sprintf("<a href=\"%s\"  target=\"_blank\">%s</a>", file.ShortWebPath, d.URL))
+				io.WriteString(w, fmt.Sprintf("<a href=\"%s\"  target=\"_blank\">%s</a>", file.ShortWebPath, shortURL(d.URL)))
 			}
 
 		}
@@ -79,7 +86,7 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 		if entering {
 			io.WriteString(w, fmt.Sprintf("\n<div class=\"callout-%s\">", d.Tag))
 			if d.Title != "" {
-				io.WriteString(w, fmt.Sprintf("<p>%s</p>", d.Title))
+				io.WriteString(w, fmt.Sprintf("<p class=\"callout-title\">%s</p>", d.Title))
 			}
 		} else {
 			io.WriteString(w, "\n</div>")
@@ -91,7 +98,7 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 
 func mdToHTML(md []byte, frontMatter FrontMatter) []byte {
 	// create markdown parser with extensions
-	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.MathJax
+	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.EmptyLinesBreakList | parser.HardLineBreak
 	parserer := parser.NewWithExtensions(extensions)
 	parserer.Opts.ParserHook = parserHook
 
@@ -99,7 +106,7 @@ func mdToHTML(md []byte, frontMatter FrontMatter) []byte {
 	doc = modifyAst(doc)
 
 	// create HTML renderer with extensions
-	htmlFlags := html.CommonFlags | html.HrefTargetBlank | html.CompletePage
+	htmlFlags := html.CommonFlags | html.HrefTargetBlank
 	opts := html.RendererOptions{
 		Flags:          htmlFlags,
 		RenderNodeHook: renderHook,
@@ -136,6 +143,7 @@ func readAndParseMD(filedata FileData) {
 	}
 
 	html := mdToHTML(md, frontMatter)
+	html = wrapHTML(html, filedata.Path)
 	os.WriteFile(filedata.WebPath, html, 0666)
 }
 
@@ -155,6 +163,9 @@ type FileData struct {
 var files []FileData
 
 func findFileWithShortNamePath(namePath string) (FileData, error) {
+	removeOther := strings.Split(namePath, "#")[0]
+	removeOther = strings.Split(removeOther, "|")[0]
+	namePath = strings.Split(removeOther, "^")[0]
 	dots := strings.Split(namePath, ".")
 	if len(dots) == 1 {
 		// no dot means is markdown
@@ -220,7 +231,7 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 
 func GetAllFiles(dirPth string) (files []string, err error) {
 	var dirs []string
-	dir, err := ioutil.ReadDir(dirPth)
+	dir, err := os.ReadDir(dirPth)
 	if err != nil {
 		return nil, err
 	}

@@ -14,61 +14,73 @@ func modifyAst(doc ast.Node) ast.Node {
 		if entering {
 			leaf := node.AsLeaf()
 			if leaf != nil {
+				for {
+					doclinkPrefixIndex := bytes.Index(leaf.Literal, doclinkPrefixBytes)
+					if doclinkPrefixIndex == -1 {
+						return ast.GoToNext
+					}
+					doclinkSuffixIndex := bytes.Index(leaf.Literal[doclinkPrefixIndex:], doclinkSuffixBytes)
+					if doclinkSuffixIndex == -1 {
+						return ast.GoToNext
+					}
 
-				doclinkPrefixIndex := bytes.Index(leaf.Literal, doclinkPrefixBytes)
-				if doclinkPrefixIndex == -1 {
-					return ast.GoToNext
-				}
-				doclinkSuffixIndex := bytes.Index(leaf.Literal[doclinkPrefixIndex:], doclinkSuffixBytes)
-				if doclinkSuffixIndex == -1 {
-					return ast.GoToNext
-				}
-				if doclinkPrefixIndex > doclinkSuffixIndex {
-					return ast.GoToNext
-				}
-				if doclinkPrefixIndex != 0 {
-					newnode := &ast.Text{}
-					newnode.Literal = leaf.Literal[:doclinkPrefixIndex]
-					leaf.Literal = leaf.Literal[doclinkPrefixIndex:]
-					index := 0
+					if doclinkPrefixIndex > doclinkSuffixIndex {
+						return ast.GoToNext
+					}
+
+					if doclinkPrefixIndex != 0 {
+						newnode := &ast.Text{}
+						newnode.Literal = leaf.Literal[:doclinkPrefixIndex]
+						leaf.Literal = leaf.Literal[doclinkPrefixIndex:]
+						index := 0
+						parent := node.GetParent().AsContainer()
+						for i, v := range parent.Children {
+							if v == node {
+								index = i
+								break
+							}
+						}
+
+						insertNewNode(newnode, parent, index)
+						// debug
+						// fmt.Println("--")
+						// for _, v := range parent.Children {
+						// 	vv := v.AsLeaf()
+						// 	if vv != nil {
+						// 		fmt.Println(string(vv.Literal))
+						// 	}
+						// }
+						continue
+					}
+
+					insideDoclink := leaf.Literal[doclinkPrefixIndex+doclinkPrefixBytesLen : doclinkSuffixIndex]
+
+					leaf.Literal = leaf.Literal[doclinkSuffixIndex+doclinkPrefixBytesLen:]
+
 					parent := node.GetParent().AsContainer()
+					index := 0
 					for i, v := range parent.Children {
 						if v == node {
 							index = i
 							break
 						}
 					}
+					newnode := &DocLink{
+						URL:    string(insideDoclink),
+						Inline: true,
+					}
 					insertNewNode(newnode, parent, index)
 
-					return ast.GoToNext
+					// debug
+					// fmt.Println("--")
+					// for _, v := range parent.Children {
+					// 	vv := v.AsLeaf()
+					// 	if vv != nil {
+					// 		fmt.Println(string(vv.Literal))
+					// 	}
+					// }
 				}
 
-				insideDoclink := leaf.Literal[doclinkPrefixIndex+doclinkPrefixBytesLen : doclinkSuffixIndex]
-
-				leaf.Literal = leaf.Literal[doclinkSuffixIndex+doclinkPrefixBytesLen:]
-
-				parent := node.GetParent().AsContainer()
-				index := 0
-				for i, v := range parent.Children {
-					if v == node {
-						index = i
-						break
-					}
-				}
-				newnode := &DocLink{
-					URL:    string(insideDoclink),
-					Inline: true,
-				}
-				insertNewNode(newnode, parent, index)
-
-				// debug
-				// fmt.Println("--")
-				// for _, v := range parent.Children {
-				// 	vv := v.AsLeaf()
-				// 	if vv != nil {
-				// 		fmt.Println(string(vv.Literal))
-				// 	}
-				// }
 			}
 		}
 		return ast.GoToNext

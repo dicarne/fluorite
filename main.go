@@ -1,5 +1,5 @@
 package main
 
 func main() {
-	generateObsidianValt("D:\\wpssync\\notes", "output", "default")
+	generateObsidianValt("testdata", "output", "default")
 }

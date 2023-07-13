@@ -1,7 +1,27 @@
-p {
-    color: brown;
+.callout-tip {
+    background-color: rgb(229, 248, 248);
+    padding: 0.6rem 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 1px 1px 2px 1px rgba(0, 0, 0, 0.158);
 }
 
-.callout-tip{
-    background-color: aquamarine;
+.callout-title {
+    font-weight: bold;
+}
+
+.note-body {
+    max-width: 60rem;
+    margin: auto;
+    background-color: rgb(245, 245, 245);
+    padding: 4rem;
+    box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.158);
+    border-radius: 0.5rem;
+}
+
+html {
+    background-color: rgb(196, 196, 196);
+}
+
+hr {
+    border-color: #ffffff69;
 }
