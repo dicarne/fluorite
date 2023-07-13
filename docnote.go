@@ -18,7 +18,6 @@ import (
 	"github.com/gomarkdown/markdown/ast"
 	"github.com/gomarkdown/markdown/html"
 	"github.com/gomarkdown/markdown/parser"
-	"github.com/google/uuid"
 )
 
 type FrontMatter struct {
@@ -205,9 +204,24 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 	CopyFile("theme/"+themeName+"/main.css", path.Join(outputFolder, "main.css"))
 
 	prefixLen := len(obsidianRoot)
+	for i, v := range includeDirs {
+		includeDirs[i] = filepath.ToSlash(path.Join(obsidianRoot, v))
+	}
 	for _, filePath := range filePaths {
 		filePath = filepath.ToSlash(filePath) // change "\"" to "/"
-		uuid := uuid.New()
+		if len(includeDirs) > 0 {
+			needadd := false
+			for _, p := range includeDirs {
+				if strings.HasPrefix(filePath, p) {
+					needadd = true
+					break
+				}
+			}
+			if !needadd {
+				continue
+			}
+		}
+
 		dots := strings.Split(filePath, ".")
 		if len(dots) == 1 {
 			dots = append(dots, "unknow")
@@ -219,7 +233,6 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 		}
 		files = append(files, FileData{
 			Path:         filePath[prefixLen+1:],
-			UUID:         uuid.String(),
 			AbsPath:      filePath,
 			Ext:          ext,
 			WebPath:      path.Join(outputFolder, "notes", fmt.Sprintf("%x.%s", md5.Sum([]byte(filePath[prefixLen+1:])), ext2)),
@@ -255,7 +268,8 @@ func GetAllFiles(dirPth string) (files []string, err error) {
 			dirs = append(dirs, dirPth+PthSep+fi.Name())
 			GetAllFiles(dirPth + PthSep + fi.Name())
 		} else {
-			files = append(files, dirPth+PthSep+fi.Name())
+			fpath := dirPth + PthSep + fi.Name()
+			files = append(files, fpath)
 		}
 	}
 

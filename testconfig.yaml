@@ -1,3 +1,6 @@
 root: testdata
 theme: default
 output: output
+include:
+  - folder
+  - resources

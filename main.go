@@ -9,15 +9,18 @@ import (
 )
 
 type FluoriteConfig struct {
-	Root   string `yaml:"root"`
-	Theme  string `yaml:"theme"`
-	Output string `yaml:"output"`
+	Root    string   `yaml:"root"`
+	Theme   string   `yaml:"theme"`
+	Output  string   `yaml:"output"`
+	Include []string `yaml:"include"`
 }
 
 var configFile = flag.String("c", "", "YAML config file path")
 var obsidianRoot = flag.String("i", "", "obsidian notes folder")
 var themeName = flag.String("t", "default", "theme name")
 var outputFolder = flag.String("o", "output", "output folder")
+
+var includeDirs []string
 
 func main() {
 	flag.Parse()
@@ -36,6 +39,7 @@ func main() {
 		if *outputFolder == "output" && confs.Output != "" {
 			*outputFolder = confs.Output
 		}
+		includeDirs = confs.Include
 	}
 	if *obsidianRoot == "" {
 		fmt.Println("Must specify a Obsidian folder")
