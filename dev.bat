@@ -1,0 +1,1 @@
+go build && .\fluorite.exe -c .\testconfig.yaml

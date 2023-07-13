@@ -143,7 +143,15 @@ func readAndParseMD(filedata FileData) {
 	}
 
 	html := mdToHTML(md, frontMatter)
-	html = wrapHTML(html, filedata.Path)
+	buf := bytes.Buffer{}
+	buf.WriteString("<h1>")
+	titles := strings.Split(filedata.Path, "/")
+	title := strings.Split(titles[len(titles)-1], ".")[0]
+	buf.WriteString(title)
+	buf.WriteString("</h1>")
+	buf.WriteString("<hr/>")
+	buf.Write(html)
+	html = wrapHTML(buf.Bytes(), filedata.Path, "../main.css")
 	os.WriteFile(filedata.WebPath, html, 0666)
 }
 
@@ -227,6 +235,7 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 		}
 		readAndParseMD(file)
 	}
+	buildIndex(outputFolder)
 }
 
 func GetAllFiles(dirPth string) (files []string, err error) {
@@ -256,4 +265,23 @@ func GetAllFiles(dirPth string) (files []string, err error) {
 	}
 
 	return files, nil
+}
+
+func buildIndex(outputFolder string) {
+	buf := bytes.Buffer{}
+	buf.WriteString("<h1>Index</h1>")
+	buf.WriteString("<div>")
+	for _, v := range files {
+		if v.Ext != "md" {
+			continue
+		}
+		buf.WriteString("<p><a href=\"")
+		buf.WriteString("notes/" + v.ShortWebPath)
+		buf.WriteString("\">")
+		buf.WriteString(v.Path)
+		buf.WriteString("</a></p>\n")
+	}
+	buf.WriteString("</div>")
+	html := wrapHTML(buf.Bytes(), "Home", "main.css")
+	os.WriteFile(path.Join(outputFolder, "index.html"), html, 0666)
 }
