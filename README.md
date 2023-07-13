@@ -1,6 +1,12 @@
 # fluorite
 [中文](README_zhcn.md)
-# How to use it
+
+A minimalist tool for generating static web pages from obsidian notes. Although there are many powerful third-party tools with the same functions, but because I don't want to use my brain to think and configure, I just want to simply share my notes with my friends (and I don't want to spend money to buy official services——), so this tool was born !
+
+## feature
+All it takes is: one executable + one css style = one website!
+
+## How to use it
 
 Unzip(or build) and place it in anywhere you like, make sure the theme directory and the executable file are at the same level.
 
