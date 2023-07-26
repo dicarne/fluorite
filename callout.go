@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
 
 	"github.com/gomarkdown/markdown/ast"
@@ -42,9 +43,20 @@ func ParseCallout(data []byte) (ast.Node, []byte, int) {
 
 	blockStart := bytes.Index(data[i:], []byte("> "))
 	finalEnd := bytes.Index(data[i:], []byte("\n\n"))
+	not_found_ending := false
+	if finalEnd == -1 {
+		finalEnd = len(data) - 1 - i
+		not_found_ending = true
+	}
+	fmt.Printf("end: %d\n", finalEnd)
+	fmt.Printf("start: %d\n", blockStart)
+	fmt.Printf("i: %d\n", i)
 
 	lines := strings.Split(string(data[i+blockStart:finalEnd+i]), "> ")
 	blockbuffer := []byte(strings.Join(lines, "\n"))
-
-	return res, blockbuffer, finalEnd + 2 + i
+	consumed := finalEnd + 2 + i
+	if not_found_ending {
+		consumed = finalEnd + i
+	}
+	return res, blockbuffer, consumed
 }
