@@ -26,3 +26,18 @@ html {
 hr {
     border-color: #ffffff69;
 }
+
+code {
+    font-family: Consolas;
+    text-align: left;
+    padding: 0.5em;
+    padding-left: 0.8em;
+    margin: 0.5em;
+    border-radius: 5px;
+    counter-reset: line;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1;
+}

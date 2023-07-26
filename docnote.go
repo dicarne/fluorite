@@ -116,7 +116,7 @@ func mdToHTML(md []byte, frontMatter FrontMatter) []byte {
 	return markdown.Render(doc, renderer)
 }
 
-func readAndParseMD(filedata FileData) {
+func readAndParseMD(filedata FileData, style *StyleConfig) {
 	md, err := os.ReadFile(filedata.AbsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -150,7 +150,7 @@ func readAndParseMD(filedata FileData) {
 	buf.WriteString("</h1>")
 	buf.WriteString("<hr/>")
 	buf.Write(html)
-	html = wrapHTML(buf.Bytes(), filedata.Path, "../main.css")
+	html = wrapHTML(buf.Bytes(), filedata.Path, style, "..")
 	os.WriteFile(filedata.WebPath, html, 0666)
 }
 
@@ -201,14 +201,19 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 
 	ClearFolder(outputFolder)
 	os.Mkdir(path.Join(outputFolder, "notes"), 0666)
-	CopyFile("theme/"+themeName+"/main.css", path.Join(outputFolder, "main.css"))
+	destThemeFolder := path.Join(outputFolder, "theme", themeName)
+	os.MkdirAll(destThemeFolder, 0777)
+	err = CopyDir(path.Join("theme", themeName), destThemeFolder)
+	IfFatal(err, "Copy theme dir failed!")
+
+	style := readStyle(themeName)
 
 	prefixLen := len(obsidianRoot)
 	for i, v := range includeDirs {
 		includeDirs[i] = filepath.ToSlash(path.Join(obsidianRoot, v))
 	}
 	for _, filePath := range filePaths {
-		filePath = filepath.ToSlash(filePath) // change "\"" to "/"
+		filePath = filepath.ToSlash(filePath) // change "\"" to "/" on Windows
 		if len(includeDirs) > 0 {
 			needadd := false
 			for _, p := range includeDirs {
@@ -246,9 +251,9 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 			CopyFile(file.AbsPath, file.WebPath)
 			continue
 		}
-		readAndParseMD(file)
+		readAndParseMD(file, &style)
 	}
-	buildIndex(outputFolder)
+	buildIndex(outputFolder, &style)
 }
 
 func GetAllFiles(dirPth string) (files []string, err error) {
@@ -281,7 +286,7 @@ func GetAllFiles(dirPth string) (files []string, err error) {
 	return files, nil
 }
 
-func buildIndex(outputFolder string) {
+func buildIndex(outputFolder string, style *StyleConfig) {
 	buf := bytes.Buffer{}
 	buf.WriteString("<h1>Index</h1>")
 	buf.WriteString("<div>")
@@ -296,6 +301,6 @@ func buildIndex(outputFolder string) {
 		buf.WriteString("</a></p>\n")
 	}
 	buf.WriteString("</div>")
-	html := wrapHTML(buf.Bytes(), "Home", "main.css")
+	html := wrapHTML(buf.Bytes(), "Home", style, ".")
 	os.WriteFile(path.Join(outputFolder, "index.html"), html, 0666)
 }
