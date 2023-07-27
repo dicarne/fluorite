@@ -12,7 +12,7 @@ function onDoclinkHover(node, url, p) {
             if (isRootWindow()) {
                 createIframe(getNodePos(node), url, p)
             } else {
-                window.parent.postMessage({ node: getNodePos(node), url, p }, "*")
+                window.parent.postMessage({ node: getNodePos(node), url, p, type: "double-chain-iframe-open" }, "*")
             }
         }
 
@@ -38,6 +38,7 @@ function createIframe(node, url, p) {
     if (lastDocOut != -1) clearTimeout(lastDocOut)
     lastDocOut = -1
     closeIframe()
+
     popelement = document.createElement("iframe")
     popelement.setAttribute("src", url)
     popelement.setAttribute("frameBorder", 0)
@@ -114,9 +115,12 @@ function handleIframeMessage(e) {
     let node = e.data.node
     let url = e.data.url
     let p = e.data.p
+    let type = e.data.type
+    if (type != "double-chain-iframe-open") return
     if (isRootWindow()) {
+        console.log(e.data)
         createIframe(null, url, p)
     } else {
-        window.parent.postMessage({ node: node, url, p }, "*")
+        window.parent.postMessage(e.data, "*")
     }
 }
