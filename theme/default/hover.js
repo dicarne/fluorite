@@ -7,14 +7,17 @@ function onDoclinkHover(node, url, p) {
     hoverTriggerElement = node
     trigger.id += 1
     let id = trigger.id
-    if (isRootWindow()) {
-        setTimeout(() => {
-            if (hoverTriggerElement === node && id === trigger.id)
+    setTimeout(() => {
+        if (hoverTriggerElement === node && id === trigger.id) {
+            if (isRootWindow()) {
                 createIframe(getNodePos(node), url, p)
-        }, 500);
-    } else {
-        window.parent.postMessage({ node: getNodePos(node), url, p }, "*")
-    }
+            } else {
+                window.parent.postMessage({ node: getNodePos(node), url, p }, "*")
+            }
+        }
+
+    }, 500);
+
 }
 
 function getNodePos(node) {
@@ -37,6 +40,8 @@ function createIframe(node, url, p) {
     closeIframe()
     popelement = document.createElement("iframe")
     popelement.setAttribute("src", url)
+    popelement.setAttribute("frameBorder", 0)
+    popelement.className = "double-chain-iframe"
     let popW = 600
     let popH = 400
     popelement.style.width = `${popW}px`
@@ -82,8 +87,10 @@ let mouseOnFrame = false
 let lastDocOut = -1
 function onDoclinkOut(node) {
     hoverTriggerElement = null
+    trigger.id += 1
+    let id = trigger.id
     lastDocOut = setTimeout(() => {
-        if (!mouseOnFrame) closeIframe()
+        if (!mouseOnFrame && id === trigger.id) closeIframe()
         lastDocOut = -1
     }, 1000);
 }

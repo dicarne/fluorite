@@ -1,1 +1,2 @@
 hljs.highlightAll();
+hljs.initLineNumbersOnLoad();

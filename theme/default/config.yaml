@@ -1,9 +1,11 @@
 name: default
 css:
-  - main.css
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css
+  - main.css
 js:
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/go.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   - hightlight.js
   - hover.js
