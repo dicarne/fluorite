@@ -126,7 +126,7 @@ a {
 
 .share-button {
     border-style: solid;
-    border-color: #e4e4e4;
+    border-color: #e4e4e400;
     position: absolute;
     top: 10px;
     right: 10px;
@@ -139,15 +139,12 @@ a {
 }
 
 .share-button:hover {
+    border-style: solid;
     border-color: #b6b6b6;
-    color: #f7f7f7;
-    background-color: #bebebe;
-    box-shadow: inset 0px 0px 1px 0px rgb(39, 39, 39, 0.5);
 }
 
 .share-button:active {
-    border-color: #b6b6b6;
-    color: #f7f7f7;
-    background-color: #979797;
-    box-shadow: inset 0px 0px 1px 0px rgb(39, 39, 39, 0.5);
+    border-style: solid;
+    border-color: #919191;
+    color: #919191;
 }
