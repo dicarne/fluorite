@@ -33,14 +33,48 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "folder/folder/Test2.md",
+                "file": "folder/Test2.md",
                 "mode": "source",
                 "source": false
               }
             }
+          },
+          {
+            "id": "ef6bfacb13c02c48",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Hello.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "c7f509673fa80515",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Hello.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "fe2e96df4a5224e7",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "resources/render2.png"
+              }
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -106,7 +140,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "folder/folder/Test2.md",
+                "file": "resources/render2.png",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -123,7 +157,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "folder/folder/Test2.md",
+                "file": "resources/render2.png",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -146,7 +180,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "folder/folder/Test2.md"
+                "file": "resources/render2.png"
               }
             }
           }
@@ -167,13 +201,18 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "4a1e55757f97d32c",
+  "active": "32fdb06626e84f15",
   "lastOpenFiles": [
-    "folder/Test2.md",
-    "folder/Test1.md",
-    "folder/folder/Test2.md",
-    "resources/Pasted image 20230727164132.png",
+    "Another Note.md",
+    "resources/render2.png",
+    "Hello.md",
+    "resources/render.png",
     "resources/Pasted image 20230713182027.png",
+    "folder/Test1.md",
+    "resources/obsidian.png",
+    "resources/Pasted image 20230727164132.png",
+    "folder/Test2.md",
+    "folder/folder/Test2.md",
     "folder/folder",
     "resources",
     "folder"

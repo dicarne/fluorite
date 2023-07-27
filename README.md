@@ -6,6 +6,14 @@ A minimalist tool for generating static web pages from obsidian notes. Although 
 ## feature
 All it takes is: one executable + one css style = one website!
 
+In Obsidian:  
+![](testdata/resources/obsidian.png)
+
+Our Website:  
+![](testdata/resources/render.png)
+
+Support preview:  
+![](testdata/resources/render2.png)
 ## How to use it
 
 Unzip(or build) and place it in anywhere you like, make sure the theme directory and the executable file are at the same level.

@@ -5,6 +5,15 @@
 ## 特色
 只需要：一个可执行文件 + 单个 css 样式 = 一个网站！
 
+在 Obsidian:  
+![](testdata/resources/obsidian.png)
+
+生成的网页:  
+![](testdata/resources/render.png)
+
+支持双链预览:  
+![](testdata/resources/render2.png)
+
 ## 如何使用它
 
 解压缩（或构建）并将其放在您喜欢的任何位置，确保主题目录和可执行文件位于同一级别。
