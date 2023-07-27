@@ -8,7 +8,9 @@ import (
 
 func wrapHTML(html []byte, filename string, style *StyleConfig, baseUrl string) []byte {
 	buf := bytes.Buffer{}
-	buf.WriteString("<html>")
+	buf.WriteString("<html lang=\"")
+	buf.WriteString(*lang)
+	buf.WriteString("\">")
 	buf.WriteString(`
 		<head>
 		<meta charset="utf-8">`)
@@ -19,12 +21,12 @@ func wrapHTML(html []byte, filename string, style *StyleConfig, baseUrl string) 
 		_writeScript(&buf, _makeUrl(baseUrl, style.Name, style.Js[i]))
 	}
 	buf.WriteString(`<title>`)
-	buf.WriteString(filename)
+	buf.WriteString(_shortTitle(filename))
 	buf.WriteString(`
 		</title>
 		</head>`)
 	buf.WriteString("<body>")
-	buf.WriteString("<div class=\"note-body\">")
+	buf.WriteString("<div class=\"note-body\" id=\"note-body\">")
 	buf.Write(html)
 	buf.WriteString("</div>")
 	buf.WriteString("</body>")
@@ -49,4 +51,9 @@ func _makeUrl(base string, theme string, url string) string {
 		return url
 	}
 	return path.Join(base, "theme", theme, url)
+}
+
+func _shortTitle(title string) string {
+	paths := strings.Split(strings.Split(title, ".")[0], "/")
+	return paths[len(paths)-1]
 }
