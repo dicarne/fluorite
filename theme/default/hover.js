@@ -11,7 +11,7 @@ function onDoclinkHover(node, url, p) {
         setTimeout(() => {
             if (hoverTriggerElement === node && id === trigger.id)
                 createIframe(getNodePos(node), url, p)
-        }, 1000);
+        }, 500);
     } else {
         window.parent.postMessage({ node: getNodePos(node), url, p }, "*")
     }
