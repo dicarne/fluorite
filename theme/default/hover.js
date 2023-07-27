@@ -1,7 +1,17 @@
 let popelement = null
+let hoverTriggerElement
+let trigger = {
+    id: 0
+}
 function onDoclinkHover(node, url, p) {
+    hoverTriggerElement = node
+    trigger.id += 1
+    let id = trigger.id
     if (isRootWindow()) {
-        createIframe(getNodePos(node), url, p)
+        setTimeout(() => {
+            if (hoverTriggerElement === node && id === trigger.id)
+                createIframe(getNodePos(node), url, p)
+        }, 1000);
     } else {
         window.parent.postMessage({ node: getNodePos(node), url, p }, "*")
     }
@@ -65,11 +75,13 @@ function closeIframe() {
         document.body.removeChild(popelement)
         popelement = null
         mouseOnFrame = false
+        hoverTriggerElement = null
     }
 }
 let mouseOnFrame = false
 let lastDocOut = -1
 function onDoclinkOut(node) {
+    hoverTriggerElement = null
     lastDocOut = setTimeout(() => {
         if (!mouseOnFrame) closeIframe()
         lastDocOut = -1

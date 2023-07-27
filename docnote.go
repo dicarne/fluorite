@@ -72,7 +72,7 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 				return ast.GoToNext, true
 			}
 			if IsImage(file.Ext) {
-				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" style=\"width:100%%\"/>", file.ShortWebPath, shortURL(d.URL)))
+				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" style=\"max-width:100%%\"/>", file.ShortWebPath, shortURL(d.URL)))
 			} else {
 				io.WriteString(w, fmt.Sprintf("<p><a href=\"%s\"  target=\"_blank\" onmouseout=\"onDoclinkOut(this)\" onmouseover=\"onDoclinkHover(this,'%s','%s')\">%s</a></p>", file.ShortWebPath, file.ShortWebPath, d.URL, shortURL(d.URL)))
 			}

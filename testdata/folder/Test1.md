@@ -51,4 +51,6 @@ hi hiasd [[folder/folder/Test2]] asdad
 1
 [[folder/folder/Test2|Test2]]
 
+![[Pasted image 20230727164132.png]]
+
 [[folder/folder/Test2#^595e26|Test2]]

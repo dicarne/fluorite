@@ -51,7 +51,7 @@ finally you get a folder like:
 The directory of your obsidian notes folder, which is also the parent directory of the .obsidian folder.
 
 ### theme
-The theme css. look at `theme/default/main.css`
+The theme css. look at `theme/default`
 
 The theme folder should be at the same level as the executable.
 
@@ -65,6 +65,15 @@ Only the defined folder prefix will be public. Note that if the attachment folde
 ```
 go build
 ```
+
+## Theme
+Now support custom theme. Look at `theme/default`.
+
+So how to create a new theme?
+
+1. Create a new folder under `theme` folder. Folder name is your theme name.
+2. Create a `config.yaml` under `theme/your_theme`.
+3. Complete your `config.yaml`! (just like `default/config.yaml`)
 
 ## TODO
 - [ ] share button: Add a button to copy the URL and title of this page on each page.
