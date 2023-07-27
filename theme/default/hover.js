@@ -93,7 +93,7 @@ function onDoclinkOut(node) {
     lastDocOut = setTimeout(() => {
         if (!mouseOnFrame && id === trigger.id) closeIframe()
         lastDocOut = -1
-    }, 1000);
+    }, 500);
 }
 
 function onIframeHover() {
