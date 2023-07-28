@@ -84,6 +84,7 @@ So how to create a new theme?
 3. Complete your `config.yaml`! (just like `default/config.yaml`)
 
 ## TODO
-- [ ] share button: Add a button to copy the URL and title of this page on each page.
-- [ ] default css style: Now hardly any css styles are defined.
+- [x] share button: Add a button to copy the URL and title of this page on each page.
+- [x] default css style: Now hardly any css styles are defined.
 - [ ] Support for display in more formats.
+- [ ] a beautiful index page.
