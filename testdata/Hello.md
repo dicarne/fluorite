@@ -29,3 +29,5 @@ $$f(x)=kx+b$$
 ## p
 
 asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd asdasdasd asdd asas d asdasd asda asd asd asdasd asd das da das asd
+
+![](resources/obsidian.png)

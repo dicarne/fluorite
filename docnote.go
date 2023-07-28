@@ -54,6 +54,7 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 				fmt.Printf("Cant find url: %s\n", d.URL)
 				return ast.GoToNext, true
 			}
+			file.Count += 1
 			if d.Inline {
 				io.WriteString(w, fmt.Sprintf("<a href=\"%s\" class=\"double-chain\" target=\"_blank\" onmouseout=\"onDoclinkOut(this)\" onmouseover=\"onDoclinkHover(this,'%s','%s')\">%s</a>", file.ShortWebPath, file.ShortWebPath, d.URL, shortURL(d.URL)))
 			} else {
@@ -71,8 +72,9 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 				fmt.Printf("Cant find url: %s\n", d.URL)
 				return ast.GoToNext, true
 			}
+			file.Count += 1
 			if IsImage(file.Ext) {
-				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" style=\"max-width:100%%\"/>", file.ShortWebPath, shortURL(d.URL)))
+				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" class=\"md-image\"/>", file.ShortWebPath, shortURL(d.URL)))
 			} else {
 				io.WriteString(w, fmt.Sprintf("<p><a href=\"%s\" class=\"double-chain\" target=\"_blank\" onmouseout=\"onDoclinkOut(this)\" onmouseover=\"onDoclinkHover(this,'%s','%s')\">%s</a></p>", file.ShortWebPath, file.ShortWebPath, d.URL, shortURL(d.URL)))
 			}
@@ -89,6 +91,24 @@ func renderHook(w io.Writer, node ast.Node, entering bool) (ast.WalkStatus, bool
 			}
 		} else {
 			io.WriteString(w, "\n</div>")
+		}
+		return ast.GoToNext, true
+	}
+
+	if d, ok := node.(*ast.Image); ok {
+		if entering {
+			url := string(d.Destination)
+			if strings.HasPrefix(url, "https://") || strings.HasPrefix(url, "http://") {
+				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" class=\"md-image\"/>", url, shortURL(url)))
+			} else {
+				file, err := findFileWithShortNamePath(url)
+				if err != nil {
+					fmt.Printf("Cant find url: %s\n", url)
+					return ast.GoToNext, true
+				}
+				file.Count += 1
+				io.WriteString(w, fmt.Sprintf("<img src=\"%s\" alt=\"%s\" class=\"md-image\"/>", file.ShortWebPath, shortURL(url)))
+			}
 		}
 		return ast.GoToNext, true
 	}
@@ -116,7 +136,7 @@ func mdToHTML(md []byte, frontMatter FrontMatter) []byte {
 	return markdown.Render(doc, renderer)
 }
 
-func readAndParseMD(filedata FileData, style *StyleConfig) {
+func readAndParseMD(filedata *FileData, style *StyleConfig) {
 	md, err := os.ReadFile(filedata.AbsPath)
 	if err != nil {
 		log.Fatal(err)
@@ -165,11 +185,12 @@ type FileData struct {
 	Ext          string
 	WebPath      string
 	ShortWebPath string
+	Count        int
 }
 
-var files []FileData
+var files []*FileData
 
-func findFileWithShortNamePath(namePath string) (FileData, error) {
+func findFileWithShortNamePath(namePath string) (*FileData, error) {
 	removeOther := strings.Split(namePath, "#")[0]
 	removeOther = strings.Split(removeOther, "|")[0]
 	namePath = strings.Split(removeOther, "^")[0]
@@ -183,7 +204,7 @@ func findFileWithShortNamePath(namePath string) (FileData, error) {
 			return v, nil
 		}
 	}
-	return FileData{}, fmt.Errorf("can't find this file: %s", namePath)
+	return nil, fmt.Errorf("can't find this file: %s", namePath)
 }
 
 var obsidianConfigFolder = ".obsidian"
@@ -236,22 +257,27 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 		if ext2 == "md" {
 			ext2 = "html"
 		}
-		files = append(files, FileData{
+		files = append(files, &FileData{
 			Path:         filePath[prefixLen+1:],
 			AbsPath:      filePath,
 			Ext:          ext,
 			WebPath:      path.Join(outputFolder, "notes", fmt.Sprintf("%x.%s", md5.Sum([]byte(filePath[prefixLen+1:])), ext2)),
 			ShortWebPath: fmt.Sprintf("%x.%s", md5.Sum([]byte(filePath[prefixLen+1:])), ext2),
+			Count:        0,
 		})
 	}
 
 	for _, file := range files {
 		if file.Ext != "md" {
-			// is resource file
-			CopyFile(file.AbsPath, file.WebPath)
 			continue
 		}
 		readAndParseMD(file, &style)
+	}
+	for _, file := range files {
+		if file.Ext != "md" && file.Count > 0 {
+			// is resource file
+			CopyFile(file.AbsPath, file.WebPath)
+		}
 	}
 	buildIndex(outputFolder, &style)
 }

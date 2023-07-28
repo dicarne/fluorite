@@ -29,6 +29,9 @@ body {
     margin-bottom: 0px;
 }
 
+.md-image {
+    max-width:100%;
+}
 hr {
     border-color: #ffffff69;
 }
