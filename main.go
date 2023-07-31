@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path"
 
 	"gopkg.in/yaml.v3"
 )
@@ -21,6 +22,7 @@ var obsidianRoot = flag.String("i", "", "obsidian notes folder")
 var themeName = flag.String("t", "default", "theme name")
 var outputFolder = flag.String("o", "output", "output folder")
 var lang = flag.String("l", "en", "language")
+var upgrade_theme = flag.Bool("upgrade", false, "Upgrade theme, not program")
 
 var includeDirs []string
 
@@ -45,6 +47,16 @@ func main() {
 			*lang = confs.Lang
 		}
 		includeDirs = confs.Include
+	}
+	if *upgrade_theme || !FileIsExisted("theme") {
+		fmt.Println("Downloading theme...")
+		DownloadFile("https://github.com/dicarne/fluorite/releases/latest/download/theme.zip", "theme.zip")
+		p := path.Join("theme", "default")
+		if FileIsExisted(p) {
+			os.RemoveAll(p)
+		}
+		UnzipFile("theme.zip", "theme")
+		fmt.Printf("Upgrade theme success!")
 	}
 	if *obsidianRoot == "" {
 		fmt.Println("Must specify a Obsidian folder")

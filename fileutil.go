@@ -1,9 +1,12 @@
 package main
 
 import (
+	"archive/zip"
 	"io"
 	"log"
+	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -91,4 +94,64 @@ func MakeDir(dir string) error {
 		}
 	}
 	return nil
+}
+
+func DownloadFile(url string, filename string) {
+	resp, err := http.Get(url)
+	IfFatal(err, "download file error")
+	defer resp.Body.Close()
+
+	out, err := os.Create(filename)
+	IfFatal(err, "create tmp file failed")
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	IfFatal(err, "save file error")
+}
+
+func UnzipFile(path string, dir string) {
+	reader, err := zip.OpenReader("theme.zip")
+	IfFatal(err, "unzip theme error")
+	defer reader.Close()
+	for _, file := range reader.File {
+		if err := _unzipFile(file, dir); err != nil {
+			IfFatal(err, "unzip error")
+		}
+	}
+}
+
+func _unzipFile(file *zip.File, dir string) error {
+	// Prevent path traversal vulnerability.
+	// Such as if the file name is "../../../path/to/file.txt" which will be cleaned to "path/to/file.txt".
+	name := strings.TrimPrefix(filepath.Join(string(filepath.Separator), file.Name), string(filepath.Separator))
+	filePath := path.Join(dir, name)
+
+	// Create the directory of file.
+	if file.FileInfo().IsDir() {
+		if err := os.MkdirAll(filePath, os.ModePerm); err != nil {
+			return err
+		}
+		return nil
+	}
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return err
+	}
+
+	// Open the file.
+	r, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	// Create the file.
+	w, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+
+	// Save the decompressed file content.
+	_, err = io.Copy(w, r)
+	return err
 }
