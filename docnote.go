@@ -170,7 +170,7 @@ func readAndParseMD(filedata *FileData, style *StyleConfig) {
 	buf.WriteString("</h1>")
 	buf.WriteString("<hr/>")
 	buf.Write(html)
-	html = wrapHTML(buf.Bytes(), filedata.Path, style, "..")
+	html = wrapHTML(buf.Bytes(), filedata.Path, style, "..", false)
 	os.WriteFile(filedata.WebPath, html, 0666)
 }
 
@@ -208,6 +208,7 @@ func findFileWithShortNamePath(namePath string) (*FileData, error) {
 }
 
 var obsidianConfigFolder = ".obsidian"
+var index_web_path = ""
 
 func generateObsidianValt(obsidianRoot string, outputFolder string, themeName string) {
 	config := ObsidianAppConfig{}
@@ -257,14 +258,19 @@ func generateObsidianValt(obsidianRoot string, outputFolder string, themeName st
 		if ext2 == "md" {
 			ext2 = "html"
 		}
-		files = append(files, &FileData{
+
+		newfile := &FileData{
 			Path:         filePath[prefixLen+1:],
 			AbsPath:      filePath,
 			Ext:          ext,
 			WebPath:      path.Join(outputFolder, "notes", fmt.Sprintf("%x.%s", md5.Sum([]byte(filePath[prefixLen+1:])), ext2)),
 			ShortWebPath: fmt.Sprintf("%x.%s", md5.Sum([]byte(filePath[prefixLen+1:])), ext2),
 			Count:        0,
-		})
+		}
+		files = append(files, newfile)
+		if filePath[prefixLen+1:] == *index_file {
+			index_web_path = newfile.ShortWebPath
+		}
 	}
 
 	for _, file := range files {
@@ -327,6 +333,6 @@ func buildIndex(outputFolder string, style *StyleConfig) {
 		buf.WriteString("</a></p>\n")
 	}
 	buf.WriteString("</div>")
-	html := wrapHTML(buf.Bytes(), "Home", style, ".")
+	html := wrapHTML(buf.Bytes(), "Index", style, ".", true)
 	os.WriteFile(path.Join(outputFolder, "index.html"), html, 0666)
 }

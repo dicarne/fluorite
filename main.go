@@ -15,6 +15,7 @@ type FluoriteConfig struct {
 	Output  string   `yaml:"output"`
 	Include []string `yaml:"include"`
 	Lang    string   `yaml:"lang"`
+	Index   string   `yaml:"index"`
 }
 
 var configFile = flag.String("c", "", "YAML config file path")
@@ -23,6 +24,7 @@ var themeName = flag.String("t", "default", "theme name")
 var outputFolder = flag.String("o", "output", "output folder")
 var lang = flag.String("l", "en", "language")
 var upgrade_theme = flag.Bool("upgrade", false, "Upgrade theme, not program")
+var index_file = flag.String("index", "", "index file")
 
 var includeDirs []string
 
@@ -45,6 +47,9 @@ func main() {
 		}
 		if *lang == "en" && confs.Lang != "" {
 			*lang = confs.Lang
+		}
+		if *index_file == "" && confs.Index != "" {
+			*index_file = confs.Index
 		}
 		includeDirs = confs.Include
 	}

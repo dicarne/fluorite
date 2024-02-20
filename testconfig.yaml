@@ -2,3 +2,4 @@ root: testdata
 theme: default
 output: output
 lang: zh
+index: Hello.md

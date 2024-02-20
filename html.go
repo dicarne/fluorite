@@ -6,14 +6,20 @@ import (
 	"strings"
 )
 
-func wrapHTML(html []byte, filename string, style *StyleConfig, baseUrl string) []byte {
+func wrapHTML(html []byte, filename string, style *StyleConfig, baseUrl string, isIndex bool) []byte {
 	buf := bytes.Buffer{}
 	buf.WriteString("<html lang=\"")
 	buf.WriteString(*lang)
 	buf.WriteString("\">")
 	buf.WriteString(`
 		<head>
-		<meta charset="utf-8">`)
+			<meta charset="utf-8">`)
+	if index_web_path != "" && isIndex {
+		buf.WriteString(`
+			<meta http-equiv="refresh" content="0;url=notes/`)
+		buf.WriteString(index_web_path)
+		buf.WriteString(`">`)
+	}
 	for i := range style.Css {
 		_writeStyle(&buf, _makeUrl(baseUrl, style.Name, style.Css[i]))
 	}
